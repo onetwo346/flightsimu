@@ -9,12 +9,12 @@
         canvas { display: block; }
     </style>
 </head>
-<body
+<body>
     <script type="module">
         import * as THREE from 'https://cdn.jsdelivr.net/npm/three@latest/build/three.module.js';
         import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@latest/examples/jsm/controls/OrbitControls.js';
 
-        let scene, camera, renderer, spaceship;
+        let scene, camera, renderer, spaceship, controls;
         let velocity = new THREE.Vector3(0, 0, 0);
         const speed = 0.1;
 
@@ -32,18 +32,22 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
             document.body.appendChild(renderer.domElement);
 
+            // Controls
+            controls = new OrbitControls(camera, renderer.domElement);
+            controls.update();
+
             // Lighting
             const light = new THREE.DirectionalLight(0xffffff, 1);
             light.position.set(5, 10, 7);
             scene.add(light);
 
-            // Spaceship Model (Basic Shape for Now) lm
+            // Spaceship Model (Basic Shape for Now)
             const geometry = new THREE.ConeGeometry(1, 2, 8);
             const material = new THREE.MeshStandardMaterial({ color: 0x00ffcc });
             spaceship = new THREE.Mesh(geometry, material);
             scene.add(spaceship);
 
-            // Controls
+            // Event Listeners
             document.addEventListener("keydown", onKeyDown);
             document.addEventListener("keyup", onKeyUp);
 
@@ -51,6 +55,7 @@
             function animate() {
                 requestAnimationFrame(animate);
                 spaceship.position.add(velocity);
+                controls.update(); // Required if controls.enableDamping or controls.autoRotate are set to true
                 renderer.render(scene, camera);
             }
             animate();
@@ -70,7 +75,7 @@
                 case 'a': velocity.x = -speed; break; // Move Left
                 case 'd': velocity.x = speed; break;  // Move Right
                 case ' ': velocity.y = speed; break;  // Move Up
-                case 'Shift': velocity.y = -speed; break; // Move Down
+                case 'Shift': case 'ShiftLeft': case 'ShiftRight': velocity.y = -speed; break; // Move Down
             }
         }
 
@@ -78,7 +83,7 @@
             switch (event.key) {
                 case 'w': case 's': velocity.z = 0; break;
                 case 'a': case 'd': velocity.x = 0; break;
-                case ' ': case 'Shift': velocity.y = 0; break;
+                case ' ': case 'Shift': case 'ShiftLeft': case 'ShiftRight': velocity.y = 0; break;
             }
         }
 
