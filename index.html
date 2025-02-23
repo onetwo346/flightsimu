@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flight Simulator</title>
+    <title>3D Space Flight Simulator</title>
     <style>
         body { margin: 0; overflow: hidden; }
+        canvas { display: block; }
     </style>
 </head>
 <body>
@@ -14,6 +15,8 @@
         import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@latest/examples/jsm/controls/OrbitControls.js';
 
         let scene, camera, renderer, spaceship;
+        let velocity = new THREE.Vector3(0, 0, 0);
+        const speed = 0.1;
 
         function init() {
             // Scene Setup
@@ -34,20 +37,20 @@
             light.position.set(5, 10, 7);
             scene.add(light);
 
-            // Spaceship (Placeholder Cube)
-            const geometry = new THREE.BoxGeometry(1, 1, 2);
+            // Spaceship Model (Basic Shape for Now)
+            const geometry = new THREE.ConeGeometry(1, 2, 8);
             const material = new THREE.MeshStandardMaterial({ color: 0x00ffcc });
             spaceship = new THREE.Mesh(geometry, material);
             scene.add(spaceship);
 
             // Controls
-            const controls = new OrbitControls(camera, renderer.domElement);
-            controls.enableDamping = true;
+            document.addEventListener("keydown", onKeyDown);
+            document.addEventListener("keyup", onKeyUp);
 
             // Animation Loop
             function animate() {
                 requestAnimationFrame(animate);
-                controls.update();
+                spaceship.position.add(velocity);
                 renderer.render(scene, camera);
             }
             animate();
@@ -58,6 +61,25 @@
                 camera.aspect = window.innerWidth / window.innerHeight;
                 camera.updateProjectionMatrix();
             });
+        }
+
+        function onKeyDown(event) {
+            switch (event.key) {
+                case 'w': velocity.z = -speed; break; // Move Forward
+                case 's': velocity.z = speed; break;  // Move Backward
+                case 'a': velocity.x = -speed; break; // Move Left
+                case 'd': velocity.x = speed; break;  // Move Right
+                case ' ': velocity.y = speed; break;  // Move Up
+                case 'Shift': velocity.y = -speed; break; // Move Down
+            }
+        }
+
+        function onKeyUp(event) {
+            switch (event.key) {
+                case 'w': case 's': velocity.z = 0; break;
+                case 'a': case 'd': velocity.x = 0; break;
+                case ' ': case 'Shift': velocity.y = 0; break;
+            }
         }
 
         init();
