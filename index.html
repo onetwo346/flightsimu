@@ -9,7 +9,7 @@
         canvas { display: block; }
     </style>
 </head>
-<body>
+<body
     <script type="module">
         import * as THREE from 'https://cdn.jsdelivr.net/npm/three@latest/build/three.module.js';
         import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@latest/examples/jsm/controls/OrbitControls.js';
@@ -37,7 +37,7 @@
             light.position.set(5, 10, 7);
             scene.add(light);
 
-            // Spaceship Model (Basic Shape for Now)
+            // Spaceship Model (Basic Shape for Now) lm
             const geometry = new THREE.ConeGeometry(1, 2, 8);
             const material = new THREE.MeshStandardMaterial({ color: 0x00ffcc });
             spaceship = new THREE.Mesh(geometry, material);
